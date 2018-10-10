@@ -11,6 +11,7 @@ TempUnit::TempUnit(){
     _k[i]=0;
   }
   _nb = 0;
+  Serial.println("Hello from TempUnit ! ");
 }
 
 void TempUnit::setNewTU(float *fltVector){
@@ -18,7 +19,7 @@ void TempUnit::setNewTU(float *fltVector){
   int lTmpSize = getDendriteSize();
 
   for (int i=0;i<lTmpSize;i++)
-    _dvalues[i]= *fltVector[i];
+    _dvalues[i]= fltVector[i];
 }
 
 int TempUnit::learnNewVector(float *fltVector, int lintReinforcement){
@@ -36,11 +37,11 @@ int TempUnit::learnNewVector(float *fltVector, int lintReinforcement){
     _std[i]+= lintReinforcement * (0.5 - lfltTempScore)/_nb;
   }
   {
-    float lfltSumStd = sum(&_std);
-    float lfltSumWeight = sum(&_weights);
+    //float lfltSumStd = sum(&_std);
+    float lfltSumWeight = sum(&_weights[0]);
     for (int i=0;i<lTmpSize;i++){
-      _std[i]/=lfltSumStd;
-      _weights/=lfltSumWeight;
+      //_std[i]/=lfltSumStd;
+      _weights[i]/=lfltSumWeight;
     }
   }
 
@@ -70,7 +71,7 @@ float TempUnit::unitScore(float lfltInput, float lfltDendrite, float lfltWeight,
               *
               (1/(lfltSigma*sqrt(2*_pi)))
               *
-              (exp(-1*(lfltInput-lfltDendrite)/(2*lfltSigma]*lfltSigma)));
+              (exp(-1*(lfltInput-lfltDendrite)/(2*lfltSigma*lfltSigma)));
   }
 
 int TempUnit::setDendriteSize(int lintSize){
