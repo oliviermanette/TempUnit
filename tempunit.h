@@ -9,23 +9,24 @@ Created by : F.L. OLivier David MANETTE on October 2018
 #ifndef Tempunit_h
 #define Tempunit_h
 
-#define MAXSIZE 5
+#define MAXSIZE 16
 
 #include "Arduino.h"
 
 class TempUnit{
   public:
     TempUnit();
-    void setNewTU(float *fltVector);
-    int learnNewVector(float *fltVector, int lintReinforcement=1);
+    void setNewTU(float fltVector[]);
+    int learnNewVector(float fltVector[], int lintReinforcement=1);
     int setDendriteSize(int lintSize);
-    float getScore(float *fltVector);
+    float getScore(float fltVector[]);
     int getDendriteSize();
     int getMaxDSize();
 
   private:
     float unitScore(float lfltInput, float lfltDendrite, float lfltWeight,
       float lfltSigma);
+    float _rawScore(float lfltInput, float lfltDendrite,float lfltSigma);
     float sum(float *lfltValues);
     const float _pi = 3.14159;
     float _dvalues[MAXSIZE];
