@@ -31,6 +31,11 @@ class TUNet{
     float getScore(unsigned char TUId, float fltVector[]);
     int getDendriteSize(unsigned char TUId);
     int getMaxDSize(unsigned char TUId);
+    unsigned char getWinnerID(float fltVector[]);
+    void showIndividualScore(unsigned char TUId,float fltVector[]);
+    void showDValues(unsigned char TUId);
+    void showWeights(unsigned char TUId);
+    void showStd(unsigned char TUId);
   private:
     TempUnit Network[255];
     unsigned char _GuchrTUNetSize;

@@ -24,6 +24,10 @@ class TempUnit{
     float getScore(float fltVector[]);
     int getDendriteSize();
     int getMaxDSize();
+    void showIndividualScore(float fltVector[]);
+    void showDValues();
+    void showWeights();
+    void showStd();
 
   private:
     float unitScore(float lfltInput, float lfltDendrite, float lfltWeight,

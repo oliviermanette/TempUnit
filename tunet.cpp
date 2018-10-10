@@ -52,3 +52,36 @@ int TUNet::getDendriteSize(unsigned char TUId){
 int TUNet::getMaxDSize(unsigned char TUId){
   return Network[TUId].getMaxDSize();
 }
+
+void TUNet::showIndividualScore(unsigned char TUId,float fltVector[]){
+  Network[TUId].showIndividualScore(fltVector);
+}
+
+void TUNet::showDValues(unsigned char TUId){
+  Network[TUId].showDValues();
+}
+
+void TUNet::showWeights(unsigned char TUId){
+  Network[TUId].showWeights();
+}
+
+void TUNet::showStd(unsigned char TUId){
+  Network[TUId].showStd();
+}
+
+unsigned char TUNet::getWinnerID(float fltVector[]){
+  unsigned char lchrMaxID=0;
+  float currentOutput, lfltMaxOutput = 0;
+
+  for (unsigned char i=0; i<_GuchrTUNetSize;i++){
+    currentOutput = Network[i].getScore(fltVector);
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(currentOutput);
+    if (currentOutput>lfltMaxOutput){
+      lfltMaxOutput = currentOutput;
+      lchrMaxID = i;
+    }
+  }
+  return lchrMaxID;
+}
