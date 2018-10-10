@@ -1,8 +1,9 @@
-#include "Arduino.h"
+//#include "Arduino.h"
 #include "tempunit.h"
 
 TempUnit::TempUnit(){
   _currentDendriteSize = MAXSIZE;
+  _identity = -1;
 
   for (int i=0;i<MAXSIZE;i++){
     _dvalues[i]=0;
@@ -12,6 +13,15 @@ TempUnit::TempUnit(){
   }
   _nb = 0;
 
+}
+
+void TempUnit::setIdentification (char lchrIdent){
+  if (_identity==-1)
+    _identity = lchrIdent;
+}
+
+char TempUnit::getIdentification (){
+  return _identity;
 }
 
 void TempUnit::setNewTU(float fltVector[]){
@@ -46,11 +56,13 @@ int TempUnit::learnNewVector(float fltVector[], int lintReinforcement){
   {
     //float lfltSumStd = sum(&_std);
     float lfltSumWeight = sum(&_weights[0]);
-    Serial.print("TempUnit weight vector after lerning: ");
+    Serial.println("TempUnit weight vector after lerning: ");
 
     for (int i=0;i<lTmpSize;i++){
       //_std[i]/=lfltSumStd;
       _weights[i]/=lfltSumWeight;
+      Serial.print(i);
+      Serial.print(": ");
       Serial.println(_weights[i]);
     }
     Serial.println("°_°");

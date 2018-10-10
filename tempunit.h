@@ -19,6 +19,8 @@ class TempUnit{
     void setNewTU(float fltVector[]);
     int learnNewVector(float fltVector[], int lintReinforcement=1);
     int setDendriteSize(int lintSize);
+    void setIdentification (char);
+    char getIdentification ();
     float getScore(float fltVector[]);
     int getDendriteSize();
     int getMaxDSize();
@@ -32,6 +34,7 @@ class TempUnit{
     float _dvalues[MAXSIZE];
     float _weights[MAXSIZE];
     float _std[MAXSIZE];
+    char _identity;
     int _nb; //nombre de fois que c'est updaté
     int _currentDendriteSize;
     float _k[MAXSIZE]; //coefficients pour la moyenne mobile
