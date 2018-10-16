@@ -12,7 +12,10 @@ Created by : F.L. OLivier David MANETTE on October 2018
 #define TUNet_h
 #include "Arduino.h"
 
-#define MAXNETSIZE 255
+#define MAXNETSIZE 64
+
+#define MINSCORE 0.99
+#define DECRATIO 1
 
 #include "tempunit.h"
 
@@ -31,14 +34,18 @@ class TUNet{
     float getScore(unsigned char TUId, float fltVector[]);
     int getDendriteSize(unsigned char TUId);
     int getMaxDSize(unsigned char TUId);
-    unsigned char getWinnerID(float fltVector[]);
+    unsigned char getWinnerID(float fltVector[], bool verbose=false);
+    void showAllPoolScore(float fltVector[]);
+    void showAllPoolParameters();
     void showIndividualScore(unsigned char TUId,float fltVector[]);
     void showDValues(unsigned char TUId);
     void showWeights(unsigned char TUId);
     void showStd(unsigned char TUId);
   private:
-    TempUnit Network[255];
+    TempUnit Network[MAXNETSIZE];
     unsigned char _GuchrTUNetSize;
+
+    void IIN(int lIntPos, float lfltMean, float lfltStd); // inhibitory interneuron
 };
 
 #endif

@@ -43,24 +43,70 @@ int TempUnit::learnNewVector(float fltVector[], int lintReinforcement){
 
   for (int i=0;i<lTmpSize;i++){
     lfltTempScore = _rawScore(fltVector[i],_dvalues[i],_std[i]);
+    _activationsDendritique[i]=lfltTempScore;
     lfltTempNewK = lintReinforcement * lfltTempScore/_nb;
     _weights[i] += lfltTempNewK;
+    if (_weights[i]<0)
+      _weights[i]=0;
     lfltTmpKp = _k[i]+lfltTempNewK;
-    if (lfltTmpKp)
+    if ((lintReinforcement>0)&&(lfltTmpKp))
         _dvalues[i] = (_k[i]*_dvalues[i]/lfltTmpKp)
         + (lfltTempNewK/lfltTmpKp)*fltVector[i];
     _k[i]+=lfltTempNewK;
     _std[i]+= lintReinforcement * (0.5 - lfltTempScore)/_nb;
   }
-  {
-    //float lfltSumStd = sum(&_std);
-    float lfltSumWeight = sum(&_weights[0]);
-    for (int i=0;i<lTmpSize;i++){
-      //_std[i]/=lfltSumStd;
-      _weights[i]/=lfltSumWeight;
-    }
-  }
+  normalizeAllWeights();
   return _nb;
+}
+
+void TempUnit::normalizeAllWeights(){
+  int lTmpSize = getDendriteSize();
+  float lfltSumWeight = sum(&_weights[0]);
+  for (int i=0;i<lTmpSize;i++){
+    if (lfltSumWeight>0)
+      _weights[i]/=lfltSumWeight;
+    else
+      _weights[i]=1/lTmpSize;
+  }
+}
+
+float TempUnit::getActivation(int lintDendritePosition){
+  if (lintDendritePosition<getDendriteSize())
+    return _activationsDendritique[lintDendritePosition];
+  else
+    return 0;
+}
+
+float TempUnit::getSynapseMean(int lIntPos){
+  if (lIntPos<getDendriteSize())
+    return _dvalues[lIntPos];
+  else
+    return 0;
+}
+
+float TempUnit::getSynapseStd(int lIntPos){
+  if (lIntPos<getDendriteSize())
+    return _std[lIntPos];
+  else
+    return 0;
+}
+
+float TempUnit::getSynapseWeight(int lIntPos){
+  if (lIntPos<getDendriteSize())
+    return _weights[lIntPos];
+  else
+    return 0;
+}
+
+void TempUnit::setDecWeightRatio(int lintIndex, float fltRatio){
+    _weights[lintIndex] *= fltRatio;
+}
+
+bool TempUnit::isSynapse(int lIntPos, float lfltMean, float lfltStd){
+  if((_dvalues[lIntPos]==lfltMean)/*&&(_std[lIntPos]==lfltStd)*/)
+    return true;
+  else
+    return false;
 }
 
 float TempUnit::sum(float *lfltValues){

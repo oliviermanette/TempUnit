@@ -9,7 +9,7 @@ Created by : F.L. OLivier David MANETTE on October 2018
 #ifndef Tempunit_h
 #define Tempunit_h
 
-#define MAXSIZE 16
+#define MAXSIZE 64
 
 #include "Arduino.h"
 
@@ -27,17 +27,26 @@ class TempUnit{
     void showIndividualScore(float fltVector[]);
     void showDValues();
     void showWeights();
+    void setDecWeightRatio(int lintIndex, float fltRatio);
     void showStd();
+    float getActivation(int lintDendritePosition);
+    void normalizeAllWeights();
+    float getSynapseMean(int lIntPos);
+    float getSynapseStd(int lIntPos);
+    float getSynapseWeight(int lIntPos);
+    bool isSynapse(int lIntPos, float lfltMean, float lfltStd);
 
   private:
     float unitScore(float lfltInput, float lfltDendrite, float lfltWeight,
       float lfltSigma);
+
     float _rawScore(float lfltInput, float lfltDendrite,float lfltSigma);
     float sum(float *lfltValues);
     const float _pi = 3.14159;
-    float _dvalues[MAXSIZE];
-    float _weights[MAXSIZE];
-    float _std[MAXSIZE];
+    float _dvalues[MAXSIZE]; // centre de réponse
+    float _weights[MAXSIZE]; // poids synaptique
+    float _std[MAXSIZE]; // écart-type
+    float _activationsDendritique[MAXSIZE];//Les apprentissages dépendent de ça
     char _identity;
     int _nb; //nombre de fois que c'est updaté
     int _currentDendriteSize;
