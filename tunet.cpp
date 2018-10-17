@@ -22,26 +22,21 @@ bool TUNet::setNewTU(float fltVector[]){
 
 int TUNet::learnNewVector(unsigned char TUId, float fltVector[], int lintReinforcement){
   //int lintOutput = Network[TUId].learnNewVector(fltVector,lintReinforcement);
-  //int lintSize = Network[TUId].getDendriteSize();
-  //for (int i=0;i<lintSize;i++)
-  //  IIN(i,Network[TUId].getSynapseMean(i),Network[TUId].getSynapseStd(i));
-  for (unsigned char i=0;i<TUId;i++){
-      //Network[i].normalizeAllWeights();
-      Network[i].learnNewVector(fltVector,-1*lintReinforcement/8);
-  }
-  for (unsigned char i=TUId+1;i<_GuchrTUNetSize;i++){
-      //Network[i].normalizeAllWeights();
-      Network[i].learnNewVector(fltVector,-1*lintReinforcement/8);
-  }
+  int lintSize = Network[TUId].getDendriteSize();
+  for (int i=0;i<lintSize;i++)
+    IIN(i,fltVector[i]);
+  for (int i=0;i<_GuchrTUNetSize;i++)
+    Network[i].normalizeAllWeights();
+
   return Network[TUId].learnNewVector(fltVector,lintReinforcement);
 }
 
-void TUNet::IIN(int lIntPos, float lfltMean, float lfltStd){
+void TUNet::IIN(int lIntPos, float lfltInputValue){
   int lintNbNeurons=0;
   for (unsigned char i=0;i<_GuchrTUNetSize;i++)
-    if (Network[i].isSynapse(lIntPos, lfltMean, lfltStd))
+    if (Network[i].isSynapse(lIntPos, lfltInputValue)>MINSCORE)
       lintNbNeurons++;
-  if (lintNbNeurons>=(_GuchrTUNetSize)){
+  if (lintNbNeurons==_GuchrTUNetSize){
     //Serial.print(lintNbNeurons);
     //Serial.println(" : unspecific Synapse Detected");
     for (unsigned char i=0;i<_GuchrTUNetSize;i++)

@@ -30,11 +30,11 @@ class TempUnit{
     void setDecWeightRatio(int lintIndex, float fltRatio);
     void showStd();
     float getActivation(int lintDendritePosition);
-    void normalizeAllWeights();
+    void normalizeAllWeights(bool lblIsAbove1=false);
     float getSynapseMean(int lIntPos);
     float getSynapseStd(int lIntPos);
     float getSynapseWeight(int lIntPos);
-    bool isSynapse(int lIntPos, float lfltMean, float lfltStd);
+    float isSynapse(int lIntPos, float lfltInputValue);
 
   private:
     float unitScore(float lfltInput, float lfltDendrite, float lfltWeight,

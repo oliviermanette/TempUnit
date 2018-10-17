@@ -55,13 +55,18 @@ int TempUnit::learnNewVector(float fltVector[], int lintReinforcement){
     _k[i]+=lfltTempNewK;
     _std[i]+= lintReinforcement * (0.5 - lfltTempScore)/_nb;
   }
-  normalizeAllWeights();
+  normalizeAllWeights(1);
   return _nb;
 }
 
-void TempUnit::normalizeAllWeights(){
+void TempUnit::normalizeAllWeights(bool lblIsAbove1){
   int lTmpSize = getDendriteSize();
   float lfltSumWeight = sum(&_weights[0]);
+  if (lblIsAbove1)
+    if (lfltSumWeight<1){
+      Serial.println(lfltSumWeight);
+      return;
+    }
   for (int i=0;i<lTmpSize;i++){
     if (lfltSumWeight>0)
       _weights[i]/=lfltSumWeight;
@@ -102,11 +107,8 @@ void TempUnit::setDecWeightRatio(int lintIndex, float fltRatio){
     _weights[lintIndex] *= fltRatio;
 }
 
-bool TempUnit::isSynapse(int lIntPos, float lfltMean, float lfltStd){
-  if((_dvalues[lIntPos]==lfltMean)/*&&(_std[lIntPos]==lfltStd)*/)
-    return true;
-  else
-    return false;
+float TempUnit::isSynapse(int lIntPos, float lfltInputValue){
+    return _rawScore(lfltInputValue, _dvalues[lIntPos],_std[lIntPos]);
 }
 
 float TempUnit::sum(float *lfltValues){

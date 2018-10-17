@@ -14,7 +14,7 @@ Created by : F.L. OLivier David MANETTE on October 2018
 
 #define MAXNETSIZE 64
 
-#define MINSCORE 0.99
+#define MINSCORE 0.9999
 #define DECRATIO 1
 
 #include "tempunit.h"
@@ -45,7 +45,7 @@ class TUNet{
     TempUnit Network[MAXNETSIZE];
     unsigned char _GuchrTUNetSize;
 
-    void IIN(int lIntPos, float lfltMean, float lfltStd); // inhibitory interneuron
+    void IIN(int lIntPos, float lfltInputValue); // inhibitory interneuron
 };
 
 #endif
