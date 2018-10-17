@@ -3,7 +3,7 @@
 
 TempUnit::TempUnit(){
   _currentDendriteSize = MAXSIZE;
-  _identity = -1;
+  _identity = 255;
 
   for (int i=0;i<MAXSIZE;i++){
     _dvalues[i]=0;
@@ -15,25 +15,23 @@ TempUnit::TempUnit(){
 
 }
 
-void TempUnit::setIdentification (char lchrIdent){
-  if (_identity==-1)
+void TempUnit::setPoolID (unsigned char lchrIdent){
+  //if (_identity==255)
     _identity = lchrIdent;
+    Serial.print("Pool ID#:");
+    Serial.println(getPoolID());
 }
 
-char TempUnit::getIdentification (){
+unsigned char TempUnit::getPoolID (){
   return _identity;
 }
 
 void TempUnit::setNewTU(float fltVector[]){
   //Add all values to _dvalues
   int lTmpSize = getDendriteSize();
-
-  Serial.println("New TempUnit neuron added! ");
-
   for (int i=0;i<lTmpSize;i++){
     _dvalues[i]= fltVector[i];
   }
-  Serial.println("°_°");
 }
 
 int TempUnit::learnNewVector(float fltVector[], int lintReinforcement){
@@ -54,8 +52,10 @@ int TempUnit::learnNewVector(float fltVector[], int lintReinforcement){
         + (lfltTempNewK/lfltTmpKp)*fltVector[i];
     _k[i]+=lfltTempNewK;
     _std[i]+= lintReinforcement * (0.5 - lfltTempScore)/_nb;
+    if (_std[i]<=0)
+      _std[i]-= lintReinforcement * (0.5 - lfltTempScore)/_nb;
   }
-  normalizeAllWeights(1);
+  normalizeAllWeights();
   return _nb;
 }
 

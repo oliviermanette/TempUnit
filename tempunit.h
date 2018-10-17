@@ -19,8 +19,8 @@ class TempUnit{
     void setNewTU(float fltVector[]);
     int learnNewVector(float fltVector[], int lintReinforcement=1);
     int setDendriteSize(int lintSize);
-    void setIdentification (char);
-    char getIdentification ();
+    void setPoolID (unsigned char);
+    unsigned char getPoolID ();
     float getScore(float fltVector[]);
     int getDendriteSize();
     int getMaxDSize();
@@ -47,7 +47,7 @@ class TempUnit{
     float _weights[MAXSIZE]; // poids synaptique
     float _std[MAXSIZE]; // écart-type
     float _activationsDendritique[MAXSIZE];//Les apprentissages dépendent de ça
-    char _identity;
+    unsigned char _identity;
     int _nb; //nombre de fois que c'est updaté
     int _currentDendriteSize;
     float _k[MAXSIZE]; //coefficients pour la moyenne mobile

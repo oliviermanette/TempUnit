@@ -8,25 +8,64 @@ unsigned char TUNet::getTUNetSize(){
   return _GuchrTUNetSize;
 }
 
-bool TUNet::setNewTU(float fltVector[]){
+unsigned char TUNet::setNewTU(float fltVector[]){
   if (_GuchrTUNetSize<MAXNETSIZE){
     Network[_GuchrTUNetSize].setNewTU(fltVector);
     Serial.print("New TempUnit neuron added to the network with the #ID:");
     Serial.println(_GuchrTUNetSize);
+    Network[_GuchrTUNetSize].setPoolID(_GuchrTUNetSize);
     _GuchrTUNetSize++;
-    return true;
+    return _GuchrTUNetSize;
   }
   else
-    return false;
+    return 0;
+}
+
+unsigned char TUNet::getPoolsNumber(){
+  unsigned char uchrResult=0;
+  for (unsigned char i=0;i<_GuchrTUNetSize;i++){
+    if (Network[i].getPoolID()>uchrResult)
+      uchrResult = Network[i].getPoolID();
+  }
+  return uchrResult+1;
+}
+
+unsigned char TUNet::getPoolSize(unsigned char uchrPoolID){
+  unsigned char uchrResult=0;
+  for (unsigned char i=0;i<_GuchrTUNetSize;i++){
+    if (Network[i].getPoolID()==uchrPoolID)
+      uchrResult++;
+  }
+  return uchrResult;
+}
+
+unsigned char TUNet::getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]){
+  unsigned char uchrResult=0;
+  float lflTmpScore=0;
+  for (unsigned char i=0;i<_GuchrTUNetSize;i++){
+    if (Network[i].getPoolID()==uchrPoolID){
+      if (Network[i].getScore(fltVector)>lflTmpScore){
+        lflTmpScore = Network[i].getScore(fltVector);
+        uchrResult = i;
+      }
+    }
+  }
+  return uchrResult;
 }
 
 int TUNet::learnNewVector(unsigned char TUId, float fltVector[], int lintReinforcement){
-  //int lintOutput = Network[TUId].learnNewVector(fltVector,lintReinforcement);
+  unsigned char lchSuccess = setNewTU(fltVector);
   int lintSize = Network[TUId].getDendriteSize();
   for (int i=0;i<lintSize;i++)
-    IIN(i,fltVector[i]);
+      IIN(i,fltVector[i]);
   for (int i=0;i<_GuchrTUNetSize;i++)
-    Network[i].normalizeAllWeights();
+      Network[i].normalizeAllWeights();
+
+  if (lchSuccess){
+      Network[lchSuccess-1].setPoolID(TUId);
+      return 0;
+  }
+  TUId = getIDofMaxSPool(TUId, fltVector);
 
   return Network[TUId].learnNewVector(fltVector,lintReinforcement);
 }
@@ -36,6 +75,8 @@ void TUNet::IIN(int lIntPos, float lfltInputValue){
   for (unsigned char i=0;i<_GuchrTUNetSize;i++)
     if (Network[i].isSynapse(lIntPos, lfltInputValue)>MINSCORE)
       lintNbNeurons++;
+  //Serial.print("nb synapses identiques : ");
+  //Serial.println(lintNbNeurons);
   if (lintNbNeurons==_GuchrTUNetSize){
     //Serial.print(lintNbNeurons);
     //Serial.println(" : unspecific Synapse Detected");
@@ -53,12 +94,12 @@ void TUNet::setAllNetworkDendriteSize(int lintSize){
     Network[i].setDendriteSize(lintSize);
 }
 
-void TUNet::setIdentification (unsigned char TUId, char lchrIdent){
-  Network[TUId].setIdentification(lchrIdent);
+void TUNet::setPoolID (unsigned char TUId, char lchrIdent){
+  Network[TUId].setPoolID(lchrIdent);
 }
 
-char TUNet::getIdentification (unsigned char TUId){
-  return Network[TUId].getIdentification();
+char TUNet::getPoolID (unsigned char TUId){
+  return Network[TUId].getPoolID();
 }
 
 float TUNet::getScore(unsigned char TUId, float fltVector[]){
@@ -118,7 +159,7 @@ unsigned char TUNet::getWinnerID(float fltVector[], bool verbose){
     }
     if (currentOutput>lfltMaxOutput){
       lfltMaxOutput = currentOutput;
-      lchrMaxID = i;
+      lchrMaxID = Network[i].getPoolID();
     }
   }
   return lchrMaxID;
