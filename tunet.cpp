@@ -44,8 +44,8 @@ unsigned char TUNet::getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]
   float lflTmpScore=0;
   for (unsigned char i=0;i<_GuchrTUNetSize;i++){
     if (Network[i].getPoolID()==uchrPoolID){
-      if (Network[i].getScore(fltVector)>lflTmpScore){
-        lflTmpScore = Network[i].getScore(fltVector);
+      if (Network[i].getRawScore(fltVector)>lflTmpScore){
+        lflTmpScore = Network[i].getRawScore(fltVector);
         uchrResult = i;
       }
     }

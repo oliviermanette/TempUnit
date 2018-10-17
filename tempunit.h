@@ -22,6 +22,7 @@ class TempUnit{
     void setPoolID (unsigned char);
     unsigned char getPoolID ();
     float getScore(float fltVector[]);
+    float getRawScore(float fltVector[]);
     int getDendriteSize();
     int getMaxDSize();
     void showIndividualScore(float fltVector[]);

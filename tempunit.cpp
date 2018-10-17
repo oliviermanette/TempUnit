@@ -130,6 +130,17 @@ float TempUnit::getScore(float fltVector[]){
   }
   return lfltScore;
 }
+float TempUnit::getRawScore(float fltVector[]){
+  int lTmpSize = getDendriteSize();
+  float lfltScore = 0, lfltTempValue=0;
+  for (int i=0;i<lTmpSize;i++){
+    lfltTempValue = _rawScore(fltVector[i],_dvalues[i],_std[i]);
+    if (isnan(lfltTempValue))
+      lfltTempValue = 0;
+    lfltScore +=  lfltTempValue;
+  }
+  return lfltScore;
+}
 
 void TempUnit::showIndividualScore(float fltVector[]){
   int lTmpSize = getDendriteSize();
