@@ -15,6 +15,33 @@ TempUnit::TempUnit(){
 
 }
 
+bool TempUnit::setDValue(unsigned char luchrPosition, float lfltValue){
+  if (luchrPosition<getDendriteSize()){
+    _dvalues[luchrPosition] = lfltValue;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool TempUnit::setWeight(unsigned char luchrPosition, float lfltValue){
+  if (luchrPosition<getDendriteSize()){
+    _weights[luchrPosition] = lfltValue;
+    return true;
+  }
+  else
+    return false;
+}
+
+bool TempUnit::setStd(unsigned char luchrPosition, float lfltValue){
+  if (luchrPosition<getDendriteSize()){
+    _std[luchrPosition] = lfltValue;
+    return true;
+  }
+  else
+    return false;
+}
+
 void TempUnit::setPoolID (unsigned char lchrIdent){
   //if (_identity==255)
     _identity = lchrIdent;

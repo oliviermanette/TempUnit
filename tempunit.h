@@ -37,6 +37,10 @@ class TempUnit{
     float getSynapseWeight(int lIntPos);
     float isSynapse(int lIntPos, float lfltInputValue);
 
+    bool setDValue(unsigned char luchrPosition, float lfltValue);
+    bool setWeight(unsigned char luchrPosition, float lfltValue);
+    bool setStd(unsigned char luchrPosition, float lfltValue);
+
   private:
     float unitScore(float lfltInput, float lfltDendrite, float lfltWeight,
       float lfltSigma);

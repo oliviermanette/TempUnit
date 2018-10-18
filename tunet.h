@@ -12,7 +12,7 @@ Created by : F.L. OLivier David MANETTE on October 2018
 #define TUNet_h
 #include "Arduino.h"
 
-#define MAXNETSIZE 8
+#define MAXNETSIZE 64
 
 #define MINSCORE 0.999
 #define DECRATIO 1
@@ -24,8 +24,21 @@ class TUNet{
     TUNet(unsigned char NbNeurons=0);
     unsigned char getTUNetSize();
     unsigned char getPoolSize(unsigned char uchrPoolID);
+    void showPoolSize(unsigned char uchrPoolID);
     unsigned char getPoolsNumber();
+    void showPoolsNumber();
     unsigned char getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]);
+    bool setMaxNetSize(unsigned char uchrMaxNetSize);
+
+    bool selectNeuron(unsigned char luchrNeuron);
+    unsigned char getSelectedNeuron();
+    void showSelectedNeuron();
+    bool selectSynapse(unsigned char luchrNeuron);
+    unsigned char getSelectedSynapse();
+    void showSelectedSynapse();
+    bool setWeight(float lfltValue);
+    bool setDValue(float lfltValue);
+    bool setStd(float lfltValue);
 
     //Wrapper for TempUnit functions :
     unsigned char setNewTU(float fltVector[]);
@@ -48,6 +61,9 @@ class TUNet{
   private:
     TempUnit Network[MAXNETSIZE];
     unsigned char _GuchrTUNetSize;
+    unsigned char _GuchrMaxNetSize;
+    unsigned char _SelectedNeuron;
+    unsigned char _SelectedSynapse;
 
     void IIN(int lIntPos, float lfltInputValue); // inhibitory interneuron
 };

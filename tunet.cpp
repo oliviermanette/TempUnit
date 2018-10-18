@@ -1,11 +1,67 @@
 #include "tunet.h"
 
 TUNet::TUNet(unsigned char NbNeurons){
-  _GuchrTUNetSize = NbNeurons;
+  _GuchrMaxNetSize = MAXNETSIZE;
+  if (NbNeurons<_GuchrMaxNetSize)
+    _GuchrTUNetSize = NbNeurons;
+  else
+    _GuchrTUNetSize = _GuchrMaxNetSize;
+}
+
+bool TUNet::selectNeuron(unsigned char luchrNeuron){
+  if (luchrNeuron<_GuchrTUNetSize){
+    _SelectedNeuron = luchrNeuron;
+    return true;
+  }
+  return false;
+}
+
+unsigned char TUNet::getSelectedNeuron(){
+  return _SelectedNeuron;
+}
+
+void TUNet::showSelectedNeuron(){
+  Serial.println(_SelectedNeuron);
+}
+
+bool TUNet::setWeight(float lfltValue){
+  return Network[_SelectedNeuron].setWeight(_SelectedSynapse, lfltValue);
+}
+
+bool TUNet::setDValue(float lfltValue){
+  return Network[_SelectedNeuron].setDValue(_SelectedSynapse, lfltValue);
+}
+
+bool TUNet::setStd(float lfltValue){
+  return Network[_SelectedNeuron].setStd(_SelectedSynapse, lfltValue);
+}
+
+bool TUNet::selectSynapse(unsigned char luchrNeuron){
+  if (luchrNeuron<Network[_SelectedNeuron].getDendriteSize()){
+    _SelectedSynapse = luchrNeuron;
+    return true;
+  }
+  return false;
+}
+
+unsigned char TUNet::getSelectedSynapse(){
+  return _SelectedSynapse;
+}
+
+void TUNet::showSelectedSynapse(){
+  Serial.println(_SelectedSynapse);
 }
 
 unsigned char TUNet::getTUNetSize(){
   return _GuchrTUNetSize;
+}
+
+bool TUNet::setMaxNetSize(unsigned char uchrMaxNetSize){
+  if (_GuchrTUNetSize<uchrMaxNetSize){
+    _GuchrMaxNetSize = uchrMaxNetSize;
+    return true;
+  }
+  return false;
 }
 
 unsigned char TUNet::setNewTU(float fltVector[]){
@@ -37,6 +93,14 @@ unsigned char TUNet::getPoolSize(unsigned char uchrPoolID){
       uchrResult++;
   }
   return uchrResult;
+}
+
+void TUNet::showPoolSize(unsigned char uchrPoolID){
+  Serial.println(getPoolSize(uchrPoolID));
+}
+
+void TUNet::showPoolsNumber(){
+  Serial.println(getPoolsNumber());
 }
 
 unsigned char TUNet::getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]){
