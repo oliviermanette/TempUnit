@@ -28,7 +28,8 @@ class TUNet{
     unsigned char getPoolsNumber();
     void showPoolsNumber();
     unsigned char getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]);
-    bool setMaxNetSize(unsigned char uchrMaxNetSize);
+    bool setMaxNetSize(unsigned char uchrMaxNetSize); // to limit pool size during learning
+    bool setNetSize(unsigned char uchrNetSize);
 
     bool selectNeuron(unsigned char luchrNeuron);
     unsigned char getSelectedNeuron();

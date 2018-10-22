@@ -64,6 +64,14 @@ bool TUNet::setMaxNetSize(unsigned char uchrMaxNetSize){
   return false;
 }
 
+bool TUNet::setNetSize(unsigned char uchrNetSize){
+  if (uchrNetSize<=_GuchrMaxNetSize){
+    _GuchrTUNetSize = uchrNetSize;
+    return true;
+  }
+  return false;
+}
+
 unsigned char TUNet::setNewTU(float fltVector[]){
   if (_GuchrTUNetSize<MAXNETSIZE){
     Network[_GuchrTUNetSize].setNewTU(fltVector);
