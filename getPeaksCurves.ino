@@ -55,7 +55,7 @@ bool isSDAvailable;
 File netFile;
 
 void initNewFile(){
-
+  frecL = SD.open(chrFullNameL, FILE_WRITE);
 }
 
 void setup() {
