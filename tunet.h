@@ -30,7 +30,6 @@ class TUNet{
     unsigned char getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]);
     bool setMaxNetSize(unsigned char uchrMaxNetSize); // to limit pool size during learning
     bool setNetSize(unsigned char uchrNetSize);
-
     bool selectNeuron(unsigned char luchrNeuron);
     unsigned char getSelectedNeuron();
     void showSelectedNeuron();
@@ -40,11 +39,16 @@ class TUNet{
     bool setWeight(float lfltValue);
     bool setDValue(float lfltValue);
     bool setStd(float lfltValue);
+    float getWeight();
+    float getDValue();
+    float getStd();
+    void setPoolID(char lchrPoolID);
 
     //Wrapper for TempUnit functions :
     unsigned char setNewTU(float fltVector[]);
     int learnNewVector(unsigned char TUId, float fltVector[], int lintReinforcement=1);
     int setDendriteSize(unsigned char TUId, int lintSize);
+    int setDendriteSize(int lintSize);
     void setAllNetworkDendriteSize(int lintSize);
     void setPoolID (unsigned char TUId, char);
     char getPoolID (unsigned char TUId);

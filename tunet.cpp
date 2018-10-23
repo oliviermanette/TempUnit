@@ -36,6 +36,18 @@ bool TUNet::setStd(float lfltValue){
   return Network[_SelectedNeuron].setStd(_SelectedSynapse, lfltValue);
 }
 
+float TUNet::getWeight(){
+  return Network[_SelectedNeuron].getSynapseWeight(_SelectedSynapse);
+}
+
+float TUNet::getDValue(){
+  return Network[_SelectedNeuron].getSynapseMean(_SelectedSynapse);
+}
+
+float TUNet::getStd(){
+  return Network[_SelectedNeuron].getSynapseStd(_SelectedSynapse);
+}
+
 bool TUNet::selectSynapse(unsigned char luchrNeuron){
   if (luchrNeuron<Network[_SelectedNeuron].getDendriteSize()){
     _SelectedSynapse = luchrNeuron;
@@ -161,6 +173,10 @@ int TUNet::setDendriteSize(unsigned char TUId, int lintSize){
   return Network[TUId].setDendriteSize(lintSize);
 }
 
+int TUNet::setDendriteSize(int lintSize){
+  return Network[getSelectedNeuron()].setDendriteSize(lintSize);
+}
+
 void TUNet::setAllNetworkDendriteSize(int lintSize){
   for (unsigned char i=0;i<MAXNETSIZE;i++)
     Network[i].setDendriteSize(lintSize);
@@ -168,6 +184,10 @@ void TUNet::setAllNetworkDendriteSize(int lintSize){
 
 void TUNet::setPoolID (unsigned char TUId, char lchrIdent){
   Network[TUId].setPoolID(lchrIdent);
+}
+
+void TUNet::setPoolID(char lchrPoolID){
+  Network[_SelectedNeuron].setPoolID(lchrPoolID);
 }
 
 char TUNet::getPoolID (unsigned char TUId){
