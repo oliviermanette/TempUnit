@@ -182,16 +182,20 @@ void TUNet::setAllNetworkDendriteSize(int lintSize){
     Network[i].setDendriteSize(lintSize);
 }
 
-void TUNet::setPoolID (unsigned char TUId, char lchrIdent){
+void TUNet::setPoolID (unsigned char TUId, unsigned char lchrIdent){
   Network[TUId].setPoolID(lchrIdent);
 }
 
-void TUNet::setPoolID(char lchrPoolID){
+void TUNet::setPoolID(unsigned char lchrPoolID){
   Network[_SelectedNeuron].setPoolID(lchrPoolID);
 }
 
-char TUNet::getPoolID (unsigned char TUId){
+unsigned char TUNet::getPoolID (unsigned char TUId){
   return Network[TUId].getPoolID();
+}
+
+void TUNet::showPoolID(unsigned char TUId){
+  Serial.println(Network[TUId].getPoolID());
 }
 
 float TUNet::getScore(unsigned char TUId, float fltVector[]){

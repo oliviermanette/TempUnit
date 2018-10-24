@@ -42,7 +42,7 @@ class TUNet{
     float getWeight();
     float getDValue();
     float getStd();
-    void setPoolID(char lchrPoolID);
+    void setPoolID(unsigned char lchrPoolID);
 
     //Wrapper for TempUnit functions :
     unsigned char setNewTU(float fltVector[]);
@@ -50,8 +50,9 @@ class TUNet{
     int setDendriteSize(unsigned char TUId, int lintSize);
     int setDendriteSize(int lintSize);
     void setAllNetworkDendriteSize(int lintSize);
-    void setPoolID (unsigned char TUId, char);
-    char getPoolID (unsigned char TUId);
+    void setPoolID (unsigned char TUId, unsigned char);
+    unsigned char getPoolID (unsigned char TUId);
+    void showPoolID(unsigned char TUId);
 
     float getScore(unsigned char TUId, float fltVector[]);
     int getDendriteSize(unsigned char TUId);
