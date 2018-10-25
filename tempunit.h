@@ -56,7 +56,8 @@ class TempUnit{
     int _nb; //nombre de fois que c'est updaté
     int _currentDendriteSize;
     float _k[MAXSIZE]; //coefficients pour la moyenne mobile
-
+    float _minScore;
+    float _maxScore;
 };
 
 #endif

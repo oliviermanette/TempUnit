@@ -4,6 +4,8 @@
 TempUnit::TempUnit(){
   _currentDendriteSize = MAXSIZE;
   _identity = 255;
+  _minScore = 1;
+  _maxScore = 0;
 
   for (int i=0;i<MAXSIZE;i++){
     _dvalues[i]=0;
@@ -155,8 +157,13 @@ float TempUnit::getScore(float fltVector[]){
       lfltTempValue = 0;
     lfltScore +=  lfltTempValue;
   }
-  return lfltScore;
+  if (_minScore>lfltScore)
+    _minScore = lfltScore;
+  if (_maxScore<lfltScore)
+    _maxScore = lfltScore;
+  return ((lfltScore-_minScore)/(_maxScore-_minScore));
 }
+
 float TempUnit::getRawScore(float fltVector[]){
   int lTmpSize = getDendriteSize();
   float lfltScore = 0, lfltTempValue=0;
