@@ -2,6 +2,8 @@
 
 TUNet::TUNet(unsigned char NbNeurons){
   _GuchrMaxNetSize = MAXNETSIZE;
+  _NetID = 0;
+  _TimeShift = 0;
   if (NbNeurons<_GuchrMaxNetSize)
     _GuchrTUNetSize = NbNeurons;
   else
@@ -15,6 +17,7 @@ bool TUNet::selectNeuron(unsigned char luchrNeuron){
   }
   return false;
 }
+
 
 unsigned char TUNet::getSelectedNeuron(){
   return _SelectedNeuron;
@@ -137,8 +140,27 @@ unsigned char TUNet::getIDofMaxSPool(unsigned char uchrPoolID, float fltVector[]
   return uchrResult;
 }
 
+float TUNet::getMaxScoreOfPool(unsigned char uchrPoolID, float fltVector[]){
+  float lflTmpScore=0;
+  for (unsigned char i=0;i<_GuchrTUNetSize;i++)
+    if (Network[i].getPoolID()==uchrPoolID)
+      if (Network[i].getScore(fltVector)>lflTmpScore)
+        lflTmpScore = Network[i].getScore(fltVector);
+  return lflTmpScore;
+}
+
+void TUNet::showMaxOfPoolScore(float fltVector[]){
+  unsigned char lchrNb = getPoolsNumber();
+  for (unsigned char i=0;i<lchrNb;i++)
+    Serial.println(getMaxScoreOfPool(i,fltVector));
+}
+
 int TUNet::learnNewVector(unsigned char TUId, float fltVector[], int lintReinforcement){
-  unsigned char lchSuccess = setNewTU(fltVector);
+  //Create new TU only if _maxScore<0.8
+  unsigned char lchSuccess = 0;
+  if (getMaxScoreOfPool(TUId,fltVector)<0.8)
+    lchSuccess = setNewTU(fltVector);
+
   int lintSize = Network[TUId].getDendriteSize();
   for (int i=0;i<lintSize;i++)
       IIN(i,fltVector[i]);
@@ -194,16 +216,44 @@ unsigned char TUNet::getPoolID (unsigned char TUId){
   return Network[TUId].getPoolID();
 }
 
+void TUNet::setNetTimeShift(unsigned long luintTS){
+  _TimeShift = luintTS;
+}
+
+unsigned long TUNet::getNetTimeStamp(){
+  return round(millis()/1000) + _TimeShift;
+}
+
+void TUNet::showNetTimeStamp(){
+  Serial.println(getNetTimeStamp());
+}
+
 void TUNet::showPoolID(unsigned char TUId){
   Serial.println(Network[TUId].getPoolID());
+}
+
+void TUNet::TUNet::setNetID(unsigned char luchrID){
+  _NetID = luchrID;
+}
+
+unsigned char TUNet::getNetID(){
+  return _NetID;
+}
+
+void TUNet::showNetID(){
+  Serial.println(_NetID);
 }
 
 float TUNet::getScore(unsigned char TUId, float fltVector[]){
   return Network[TUId].getScore(fltVector);
 }
 
-int TUNet::getDendriteSize(unsigned char TUId){
+unsigned char TUNet::getDendriteSize(unsigned char TUId){
   return Network[TUId].getDendriteSize();
+}
+
+void TUNet::showDendriteLength(unsigned char TUId){
+  Network[TUId].showDendriteLength();
 }
 
 int TUNet::getMaxDSize(unsigned char TUId){
@@ -229,7 +279,9 @@ void TUNet::showStd(unsigned char TUId){
 void TUNet::showAllPoolScore(float fltVector[]){
   for (unsigned char i=0; i<_GuchrTUNetSize;i++){
     Serial.print(i);
-    Serial.print(": ");
+    Serial.print("(");
+    Serial.print(Network[i].getPoolID());
+    Serial.print(") : ");
     Serial.println(Network[i].getScore(fltVector));
   }
 }
@@ -243,7 +295,7 @@ void TUNet::showAllPoolParameters(){
 }
 
 unsigned char TUNet::getWinnerID(float fltVector[], bool verbose){
-  unsigned char lchrMaxID=0;
+  unsigned char lchrPoolID=0;//, lchrMaxID=0;
   float currentOutput, lfltMaxOutput = 0;
 
   for (unsigned char i=0; i<_GuchrTUNetSize;i++){
@@ -255,8 +307,10 @@ unsigned char TUNet::getWinnerID(float fltVector[], bool verbose){
     }
     if (currentOutput>lfltMaxOutput){
       lfltMaxOutput = currentOutput;
-      lchrMaxID = Network[i].getPoolID();
+      lchrPoolID = Network[i].getPoolID();
+      //lchrMaxID = i;
     }
   }
-  return lchrMaxID;
+  //saveEvent(fltVector, lchrMaxID, Network[lchrMaxID].getDendriteSize());
+  return lchrPoolID;
 }

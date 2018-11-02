@@ -14,7 +14,6 @@ TempUnit::TempUnit(){
     _k[i]=0;
   }
   _nb = 0;
-
 }
 
 bool TempUnit::setDValue(unsigned char luchrPosition, float lfltValue){
@@ -72,17 +71,25 @@ int TempUnit::learnNewVector(float fltVector[], int lintReinforcement){
     lfltTempScore = _rawScore(fltVector[i],_dvalues[i],_std[i]);
     _activationsDendritique[i]=lfltTempScore;
     lfltTempNewK = lintReinforcement * lfltTempScore/_nb;
-    _weights[i] += lfltTempNewK;
+    _weights[i] += lfltTempNewK * _nb / sqrt(_nb);
     if (_weights[i]<0)
       _weights[i]=0;
     lfltTmpKp = _k[i]+lfltTempNewK;
+    float lfltMunm1 = _dvalues[i];
     if ((lintReinforcement>0)&&(lfltTmpKp))
         _dvalues[i] = (_k[i]*_dvalues[i]/lfltTmpKp)
         + (lfltTempNewK/lfltTmpKp)*fltVector[i];
     _k[i]+=lfltTempNewK;
-    _std[i]+= lintReinforcement * (0.5 - lfltTempScore)/_nb;
+
+    // if (_nb==2)
+    //   _std[i]=0;
+    // if (_nb>1){
+    //   float lfltPhi = (_nb-1)*(pow(lfltMunm1,2)-pow(_dvalues[i],2));
+    //   _std[i] = sqrt(((_nb-2)/(_nb-1))*(pow(_std[i],2)-lfltPhi) + pow((fltVector[i]-_dvalues[i]),2)/(_nb-1));
+    // }
+    _std[i]+= lintReinforcement * (0.5 - lfltTempScore)/sqrt(_nb);
     if (_std[i]<=0)
-      _std[i]-= lintReinforcement * (0.5 - lfltTempScore)/_nb;
+      _std[i]-= lintReinforcement * (0.5 - lfltTempScore)/sqrt(_nb);
   }
   normalizeAllWeights();
   return _nb;
@@ -160,8 +167,18 @@ float TempUnit::getScore(float fltVector[]){
   if (_minScore>lfltScore)
     _minScore = lfltScore;
   if (_maxScore<lfltScore)
-    _maxScore = lfltScore;
-  return ((lfltScore-_minScore)/(_maxScore-_minScore));
+    _maxScore = lfltScore;/*
+  Serial.print("[_minScore:");
+  Serial.print(_minScore);
+  Serial.print("]");
+
+  Serial.print("[_maxScore:");
+  Serial.print(_maxScore);
+  Serial.print("]");*/
+  if ((_maxScore*0.8)>_minScore)
+    return ((lfltScore-_minScore)/(_maxScore-_minScore));
+  else
+    return lfltScore;
 }
 
 float TempUnit::getRawScore(float fltVector[]){
@@ -196,8 +213,8 @@ void TempUnit::showDValues(){
   int lTmpSize = getDendriteSize();
   Serial.println("Mean Centered Values");
   for (int i=0;i<lTmpSize;i++){
-    Serial.print(i);
-    Serial.print(": ");
+    //Serial.print(i);
+    //Serial.print(": ");
     Serial.println(_dvalues[i]);
   }
 }
@@ -206,8 +223,8 @@ void TempUnit::showWeights(){
   int lTmpSize = getDendriteSize();
   Serial.println("Weights");
   for (int i=0;i<lTmpSize;i++){
-    Serial.print(i);
-    Serial.print(": ");
+  //  Serial.print(i);
+  //  Serial.print(": ");
     Serial.println(_weights[i]);
   }
 }
@@ -216,8 +233,8 @@ void TempUnit::showStd(){
   int lTmpSize = getDendriteSize();
   Serial.println("std");
   for (int i=0;i<lTmpSize;i++){
-    Serial.print(i);
-    Serial.print(": ");
+  //  Serial.print(i);
+  //  Serial.print(": ");
     Serial.println(_std[i]);
   }
 }
@@ -234,7 +251,7 @@ float TempUnit::_rawScore(float lfltInput, float lfltDendrite,float lfltSigma){
   return exp(-1*pow((lfltInput-lfltDendrite),2)/(lfltSigma));
 }
 
-int TempUnit::setDendriteSize(int lintSize){
+int TempUnit::setDendriteSize(unsigned char lintSize){
   if (lintSize<MAXSIZE)
     _currentDendriteSize = lintSize;
   else
@@ -244,8 +261,12 @@ int TempUnit::setDendriteSize(int lintSize){
   return _currentDendriteSize;
 }
 
-int TempUnit::getDendriteSize(){
+unsigned char TempUnit::getDendriteSize(){
   return _currentDendriteSize;
+}
+
+void TempUnit::showDendriteLength(){
+  Serial.println(getDendriteSize());
 }
 
 int getMaxDSize(){
