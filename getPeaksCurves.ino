@@ -85,26 +85,26 @@ void parseSerial(bool lblStreamFile){
             Serial.println("°_°");
             Serial.println("TempUnit Hardware Command List:");
             Serial.println("===============================");
-            Serial.println("h: display this help message");
+            Serial.println("h: display this Help message");
             Serial.println("L: display last peak signal from Left sensor");
             Serial.println("R: display last peak signal from Right sensor");
-            Serial.println("c: display calculated information about last peak.");
+            Serial.println("c: display Calculated information about last peak.");
             Serial.println("F: display evaluated information about the strength of the shock");
             Serial.println("");
             Serial.println("a:    Add new TempUnit neuron associated on last peak");
             Serial.println("l[0]: Learn last peak on TempUnit neuron");
             Serial.println("-------------------------------------------------------");
-            Serial.println("s[0]: Display score of TempUnit neuron i on last peak");
+            Serial.println("s[0]: display Score of TempUnit neuron i on last peak");
             Serial.println("S:    Display output of all TU neurons");
             Serial.println("r:    Display max output of each pool");
-            Serial.println("n:    Display Network size");
-            Serial.println("D[0]: Display DENDRITE_LENGTH of neuron i");///////////
-            Serial.println("m[0]: Display Vector of Mean values");
-            Serial.println("w[0]: Display Weight vector");
-            Serial.println("e[0]: Display std vector");
-            Serial.println("N:    Display the parameters of all the Network");
+            Serial.println("n:    display Network size");
+            Serial.println("D[0]: display DENDRITE_LENGTH of neuron i");///////////
+            Serial.println("m[0]: display vector of Mean values");
+            Serial.println("w[0]: display Weight vector");
+            Serial.println("e[0]: Display standard dEviation vector");
+            Serial.println("N:    display the parameters of all the Network");
             Serial.println("-------------------------------------------------------");
-            Serial.println("P     : Display the number of pools (subnetworks)");
+            Serial.println("P     : display the number of Pools (subnetworks)");
             Serial.println("p[0]  : Display the size of the pool i");
             Serial.println("q[0]  : Display the pool #ID of the selected neuron i");
             Serial.println("-------------------------------------------------------");
@@ -121,13 +121,22 @@ void parseSerial(bool lblStreamFile){
             Serial.println("");
             Serial.println("i     : Display the selected neuron i");
             Serial.println("j     : Display the selected synapse j");
-            Serial.println("");
-            Serial.println("v     : Save current netword to SD card");
-            Serial.println("u     : Load network from SD card");
+            Serial.println("-------------------------------------------------------");
+            Serial.println("C     : show yes if SD Card is available");
+            Serial.println("v     : saVe current netword to SD card");
+            Serial.println("o     : lOad network from SD card");
             Serial.println("|°_°|");
           }
           else if (lchrIncomingByte==78){ //Display the parameters of all the Network
               TUPos.showAllPoolParameters();
+          }
+          else if (lchrIncomingByte==67){
+              if (isSDAvailable){
+                Serial.println("yes");
+              }
+              else{
+                Serial.println("no");
+              }
           }
           else if (lchrIncomingByte==83){ // Display output of all TU neurons"
               TUPos.showAllPoolScore(lfltValues);
@@ -504,7 +513,7 @@ void parseSerial(bool lblStreamFile){
           else if (lchrIncomingByte==118){ //Save current netword to SD card
             saveNetwork2File();
           }
-          else if (lchrIncomingByte==117){ //Load network from SD card
+          else if (lchrIncomingByte==111){ //Load network from SD card
             gFile = SD.open(chrFullName, FILE_READ);
             do {
               parseSerial(true);
@@ -611,44 +620,49 @@ void parseSerial(bool lblStreamFile){
 }
 
 void saveNetwork2File( ){
-  File netFile;
-  String strFullName = "save.tun";
-  char chrFullName[9];
-  strFullName.toCharArray(chrFullName,9);
-  if (SD.exists(chrFullName)) {
-    SD.remove(chrFullName);
-    Serial.print("This file already exists, it will be replaced by new data : ");
-    Serial.println(chrFullName);
-  }
-  netFile = SD.open(chrFullName, FILE_WRITE);
-  netFile.print("T");
-  unsigned char luchrNetSize = TUPos.getTUNetSize();
-  netFile.println(luchrNetSize);
-
-  for (unsigned char i=0;i<luchrNetSize;i++){
-    netFile.print("t");
-    netFile.println(i);
-    TUPos.selectNeuron(i);
-    netFile.print("J");
-    unsigned char lintDL = TUPos.getDendriteSize(i);
-    netFile.println(lintDL);
-    // pool ID
-    netFile.print("Y");
-    netFile.println(TUPos.getPoolID(i));
-
-    for (int j=0;j<lintDL;j++){
-      netFile.print("d");
-      netFile.println(j);
-      TUPos.selectSynapse(j);
-      netFile.print("W");
-      netFile.println(TUPos.getWeight());
-      netFile.print("E");
-      netFile.println(TUPos.getStd());
-      netFile.print("M");
-      netFile.println(TUPos.getDValue());
+  if (isSDAvailable){
+    File netFile;
+    String strFullName = "save.tun";
+    char chrFullName[9];
+    strFullName.toCharArray(chrFullName,9);
+    if (SD.exists(chrFullName)) {
+      SD.remove(chrFullName);
+      Serial.print("This file already exists, it will be replaced by new data : ");
+      Serial.println(chrFullName);
     }
+    netFile = SD.open(chrFullName, FILE_WRITE);
+    netFile.print("T");
+    unsigned char luchrNetSize = TUPos.getTUNetSize();
+    netFile.println(luchrNetSize);
+
+    for (unsigned char i=0;i<luchrNetSize;i++){
+      netFile.print("t");
+      netFile.println(i);
+      TUPos.selectNeuron(i);
+      netFile.print("J");
+      unsigned char lintDL = TUPos.getDendriteSize(i);
+      netFile.println(lintDL);
+      // pool ID
+      netFile.print("Y");
+      netFile.println(TUPos.getPoolID(i));
+
+      for (int j=0;j<lintDL;j++){
+        netFile.print("d");
+        netFile.println(j);
+        TUPos.selectSynapse(j);
+        netFile.print("W");
+        netFile.println(TUPos.getWeight());
+        netFile.print("E");
+        netFile.println(TUPos.getStd());
+        netFile.print("M");
+        netFile.println(TUPos.getDValue());
+      }
+    }
+    netFile.close();
   }
-  netFile.close();
+  else{
+    Serial.println("Cannot save file to SD, SD is not available.");
+  }
 }
 
 void setup() {
@@ -732,7 +746,6 @@ void loop() {
 
                 gchrDownSamplingPosition = 0;
                 //Should start the FFT immediately
-
                 break;
               }
             }
@@ -828,47 +841,50 @@ void loop() {
 
 bool saveEvent(float fltVector[], unsigned int TUId, unsigned char luchrDendriteLength){
   //const int lcstintFullName = 16;
-  char chrFolderName[7];
-  char chrTMP[3];
-  String strFullName = TUPos.getNetID();
-  strFullName.toCharArray(chrTMP,3);
+  if (isSDAvailable){
+    char chrFolderName[7];
+    char chrTMP[3];
+    String strFullName = TUPos.getNetID();
+    strFullName.toCharArray(chrTMP,3);
 
-  if (!SD.exists(chrTMP)){
-    SD.mkdir(chrTMP);
-    // Serial.print("Create Folder : ");
-    // Serial.println(chrTMP);
-  }
-  strFullName += "/";
-  strFullName += TUId;
-  strFullName.toCharArray(chrFolderName,7);
-  if (!SD.exists(chrFolderName)){
-    SD.mkdir(chrFolderName);
-    // Serial.print("Create Folder : ");
-    // Serial.println(chrFolderName);
-  }
-  strFullName += "/";
-  char lchrToto[5];
-  ltoa(TUPos.getNetTimeStamp(),lchrToto,5);
-  strFullName += lchrToto;
-  strFullName += ".tum";
-  char chrFullName[17];
-  strLastEvent = strFullName;
-  strFullName.toCharArray(chrFullName,17);
-  File lfFile = SD.open(chrFullName, FILE_WRITE);
-  if (!lfFile){
-    // Serial.print("Cannot create the file :");
-    // Serial.println(chrFullName);
-    return false;
-  }
+    if (!SD.exists(chrTMP)){
+      SD.mkdir(chrTMP);
+      // Serial.print("Create Folder : ");
+      // Serial.println(chrTMP);
+    }
+    strFullName += "/";
+    strFullName += TUId;
+    strFullName.toCharArray(chrFolderName,7);
+    if (!SD.exists(chrFolderName)){
+      SD.mkdir(chrFolderName);
+      // Serial.print("Create Folder : ");
+      // Serial.println(chrFolderName);
+    }
+    strFullName += "/";
+    char lchrToto[5];
+    ltoa(TUPos.getNetTimeStamp(),lchrToto,5);
+    strFullName += lchrToto;
+    strFullName += ".tum";
+    char chrFullName[17];
+    strLastEvent = strFullName;
+    strFullName.toCharArray(chrFullName,17);
+    File lfFile = SD.open(chrFullName, FILE_WRITE);
+    if (!lfFile){
+      // Serial.print("Cannot create the file :");
+      // Serial.println(chrFullName);
+      return false;
+    }
 
-  for (unsigned char i =0; i<luchrDendriteLength; i++){
-    dtostrf(fltVector[i], 15, 2, chrFullName);
-    for (int j=0;j<15-1;j++)
-      lfFile.print(chrFullName[j]);
-    lfFile.println(chrFullName[15-1]);
+    for (unsigned char i =0; i<luchrDendriteLength; i++){
+      dtostrf(fltVector[i], 15, 2, chrFullName);
+      for (int j=0;j<15-1;j++)
+        lfFile.print(chrFullName[j]);
+      lfFile.println(chrFullName[15-1]);
+    }
+    lfFile.close();
+    return true;
   }
-  lfFile.close();
-  return true;
+  return false;
 }
 
 void ArFFT(){
@@ -909,17 +925,19 @@ void downSampler(){
 }
 
 void moveFile(String source, String destination) {
-  char chrFullName[17];
-  source.toCharArray(chrFullName,17);
-  if (SD.exists(chrFullName)) {
-    File myFileIn = SD.open(chrFullName, FILE_READ);
-    destination.toCharArray(chrFullName,17);
-    File myFileOut = SD.open(chrFullName, FILE_WRITE);
-    while (myFileIn.available())
-      myFileOut.write(myFileIn.read());
-    myFileIn.close();
-    myFileOut.close();
+  if (isSDAvailable){
+    char chrFullName[17];
     source.toCharArray(chrFullName,17);
-    SD.remove(chrFullName);
+    if (SD.exists(chrFullName)) {
+      File myFileIn = SD.open(chrFullName, FILE_READ);
+      destination.toCharArray(chrFullName,17);
+      File myFileOut = SD.open(chrFullName, FILE_WRITE);
+      while (myFileIn.available())
+        myFileOut.write(myFileIn.read());
+      myFileIn.close();
+      myFileOut.close();
+      source.toCharArray(chrFullName,17);
+      SD.remove(chrFullName);
+    }
   }
 }
