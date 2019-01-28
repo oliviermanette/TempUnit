@@ -1,7 +1,7 @@
 /*
 TUNet.h Library to make a TempUnit Artificial Neural Network
 on a Arduino Compatible device
-each Arduino will work as a bunch of neurons that can interplay with others
+each Arduino board will work as a bunch of neurons that can interplay with others
 Arduino boards.
 This class create a network of max 64 neurons
 It manages the connexions and transmission of signal between neurons if there are
@@ -12,7 +12,7 @@ Created by : F.L. OLivier David MANETTE on October 2018
 #define TUNet_h
 #include "Arduino.h"
 
-#define MAXNETSIZE 26
+#define MAXNETSIZE 64
 
 #define MINSCORE 0.999
 #define DECRATIO 1
